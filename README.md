@@ -2,9 +2,9 @@
 
 ## Overview
 
-This project simulates a real-world business use case where non-production EC2 instances are only needed during standard business hours.
+This project implements a real-world solution for optimizing cloud costs by automatically managing non-production EC2 instances based on business hours.
 
-It implements an automated cost optimization solution in AWS using event-driven architecture and Infrastructure as Code to start and stop tagged instances on a defined schedule. This demonstrates how organizations can significantly reduce cloud costs by eliminating unnecessary runtime outside of operational hours.
+Using an event-driven architecture and Infrastructure as Code (Terraform), the system dynamically starts and stops tagged EC2 instances on a defined schedule. This approach reduces unnecessary runtime, improves operational efficiency, and demonstrates how organizations can significantly lower cloud expenses through automation.
 
 ---
 
@@ -33,18 +33,98 @@ This solution eliminates that waste by automatically shutting down unused infras
 
 ---
 
-## Repository Structure
+## 📸 Screenshots
 
-terraform/
-  main.tf
-  variables.tf
-  providers.tf
-  terraform.tfvars (ignored)
+### 🕒 Event Scheduling (EventBridge)
+Defines automated start/stop schedules aligned with business hours.
+![EventBridge Start](docs/screenshots/eventbridgebusinesshoursstart.png)
+![EventBridge Stop](docs/screenshots/eventbridgebusinesshoursstop.png)
 
-lambda/
-  lambda_function.py
+### 🏷️ EC2 Tagging Strategy
+Instances are dynamically selected using tags, eliminating hardcoded resource IDs.
+![EC2 Tags](docs/screenshots/ec2-tags.png)
+
+### ⚙️ Lambda Execution Logic
+Lambda function processes events and executes start/stop actions using Boto3.
+![Lambda Function](docs/screenshots/lambda-function.png)
+
+### 📊 Observability (CloudWatch Logs)
+Execution logs provide visibility into system behavior and troubleshooting.
+![CloudWatch Start](docs/screenshots/cloudwatch-start.png)
 
 ---
+
+## Repository Structure
+
+ec2-scheduler-project/
+├── README.md
+├── .gitignore
+│
+├── docs/
+│   └── screenshots/
+│       ├── amazon-eventbridge-schedules.png
+│       ├── cloudwatch-start.png
+│       ├── cloudwatch-stop.png
+│       ├── ec2-tags.png
+│       ├── eventbridgebusinesshoursstart.png
+│       ├── eventbridgebusinesshoursstop.png
+│       └── lambda-function.png
+│
+├── lambda/
+│   └── lambda_function.py
+│
+└── terraform/
+    ├── main.tf
+    ├── outputs.tf
+    ├── providers.tf
+    ├── variables.tf
+    ├── .terraform.lock.hcl
+
+---
+
+## 🔷 Key Design Decisions
+
+---
+
+### 🔹 Tag-Based Automation
+- Eliminates hardcoded resource IDs  
+- Enables dynamic discovery of EC2 instances  
+- Scales automatically as infrastructure grows  
+- Aligns with real-world cloud governance practices  
+
+---
+
+### 🔹 Least-Privilege IAM
+- Restricted permissions:
+  - `ec2:StartInstances`
+  - `ec2:StopInstances`
+  - `ec2:DescribeInstances`
+- Enforced with condition:
+  - `ec2:ResourceTag/AutoSchedule = true`
+- Prevents unauthorized actions even if Lambda logic is modified  
+
+---
+
+ ### 🔹 Remote State (HCP Terraform)
+
+ This project uses HCP Terraform to securely manage remote state, aligning with production-grade Infrastructure as Code practices.
+
+- Eliminates local `.tfstate` files from the repository  
+- Prevents state file conflicts across multiple users  
+- Enables team collaboration with state locking  
+- Secures sensitive infrastructure data  
+- Ensures consistent and reliable infrastructure deployments  
+
+---
+
+### 🔹 Event-Driven Architecture
+- Fully serverless (no persistent compute resources)  
+- Cost-efficient and scalable  
+- Loosely coupled components  
+- Aligns with modern cloud-native design patterns  
+
+---
+
 
 ## How It Works (Step-by-Step)
 
@@ -184,17 +264,6 @@ Only instances with these tags will be managed.
 
 ---
 
-## Security Design
-
-This project implements defense in depth:
-
-- Lambda filters instances by tag  
-- IAM enforces tag-based restrictions: ec2:ResourceTag/AutoSchedule = true  
-
-Even if the code is modified, unauthorized actions are blocked at the IAM level.
-
----
-
 ## Key Features
 
 - Event-driven automation  
@@ -222,7 +291,7 @@ Even if the code is modified, unauthorized actions are blocked at the IAM level.
 - HCP Terraform (remote state)  
 - IAM least-privilege design  
 - Event-driven architecture  
-- Cloud cost optimization  
+- Cloud cost optimization strategies 
 
 ---
 
