@@ -56,6 +56,7 @@ Execution logs provide visibility into system behavior and troubleshooting.
 
 ## Repository Structure
 
+```
 ec2-scheduler-project/
 ├── README.md
 ├── .gitignore
@@ -80,6 +81,7 @@ ec2-scheduler-project/
     ├── variables.tf
     ├── .terraform.lock.hcl
 
+```
 ---
 
 ## 🔷 Key Design Decisions
