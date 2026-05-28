@@ -144,6 +144,7 @@ resource "aws_lambda_function" "scheduler" {
 }
 
 resource "aws_scheduler_schedule" "start_schedule" {
+  count = var.enable_scheduler ? 1 : 0
   name                         = "${var.project_name}-start-schedule"
   description                  = "Start tagged EC2 instances on Atlanta business schedule"
   schedule_expression          = "cron(0 8 ? * MON-FRI *)"
@@ -158,12 +159,13 @@ resource "aws_scheduler_schedule" "start_schedule" {
     role_arn = aws_iam_role.scheduler_role.arn
 
     input = jsonencode({
-      action = "start"
+      action = "stop"
     })
   }
 }
 
 resource "aws_scheduler_schedule" "stop_schedule" {
+  count = var.enable_scheduler ? 1 : 0
   name                         = "${var.project_name}-stop-schedule"
   description                  = "Stop tagged EC2 instances on Atlanta business schedule"
   schedule_expression          = "cron(0 19 ? * MON-FRI *)"
@@ -184,19 +186,21 @@ resource "aws_scheduler_schedule" "stop_schedule" {
 }
 
 resource "aws_lambda_permission" "allow_start_schedule" {
+  count         = var.enable_scheduler ? 1 : 0
   statement_id  = "AllowExecutionFromStartSchedule"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.scheduler.function_name
   principal     = "scheduler.amazonaws.com"
-  source_arn    = aws_scheduler_schedule.start_schedule.arn
+  source_arn    = aws_scheduler_schedule.start_schedule[0].arn
 }
 
 resource "aws_lambda_permission" "allow_stop_schedule" {
+  count         = var.enable_scheduler ? 1 : 0
   statement_id  = "AllowExecutionFromStopSchedule"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.scheduler.function_name
   principal     = "scheduler.amazonaws.com"
-  source_arn    = aws_scheduler_schedule.stop_schedule.arn
+  source_arn    = aws_scheduler_schedule.stop_schedule[0].arn
 }
 
 resource "aws_instance" "cost_saver_test" {

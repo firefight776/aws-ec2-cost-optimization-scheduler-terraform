@@ -3,9 +3,9 @@ output "lambda_function_name" {
 }
 
 output "start_schedule_name" {
-  value = aws_scheduler_schedule.start_schedule.name
+  value = var.enable_scheduler ? aws_scheduler_schedule.start_schedule[0].name : null
 }
 
 output "stop_schedule_name" {
-  value = aws_scheduler_schedule.stop_schedule.name
+  value = var.enable_scheduler ? aws_scheduler_schedule.stop_schedule[0].name : null
 }

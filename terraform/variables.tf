@@ -34,3 +34,8 @@ variable "notification_email" {
   description = "Email address for SNS notifications"
   type        = string
 }
+
+variable "enable_scheduler" {
+  type    = bool
+  default = false
+}

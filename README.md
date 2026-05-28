@@ -31,6 +31,10 @@ This solution eliminates that waste by automatically shutting down unused infras
 - Terraform provisions all infrastructure  
 - HCP Terraform manages remote state  
 
+## Architecture Diagram
+
+![EC2-Scheduler-Project](docs/architecture-diagrams/aws-ec2-cost-optimization-platform-architecture.png)
+
 ---
 
 ## 📸 Screenshots
